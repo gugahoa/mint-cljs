@@ -1,0 +1,12 @@
+#+PROPERTY: id some-unique-id
+#+PROPERTY: date 2020-12-30
+#+PROPERTY: title Building a static blog with ClojureScript and Reagent
+#+PROPERTY: summary We're going to create a fully loaded blog, with pagination, search and fast load time. All done using ClojureScript and Reagent at compile-time
+
+* Building a static blog with ClojureScript and Reagent
+
+This article is being written as I learn ClojureScript and create the blog which will host the article itself. It's a living organism.
+
+First of all, there's only two things that will go into the compile step:
+1. The index list, with title, summary, id and publishing date
+2. The article content, which somehow I want to separate in different modules so that tree shaking can do the heavy lifting
