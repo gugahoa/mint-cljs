@@ -5,12 +5,6 @@
 (def directory (io/file "./posts"))
 (def files (filter #(.isFile %) (file-seq directory)))
 
-(defn- file-name [file]
-  (->> file
-       .toPath
-       .getFileName
-       str))
-
 (defn- raw-properties [reader]
   (take-while not-empty reader))
 
@@ -31,9 +25,6 @@
 (defn- read-properties [file]
   (with-open [rdr (io/reader file)]
     (build-properties rdr)))
-
-(defmacro file-names []
-  (mapv file-name files))
 
 (defmacro posts-index []
   (mapv read-properties files))
