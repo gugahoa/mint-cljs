@@ -76,3 +76,15 @@ Updating the `/posts` folder, or any file therein, does not trigger hot reload. 
 *** TODO article id can be inferred by file name, as the file name is guaranteed to be unique
 
 ** The Article
+
+Rough sketch for the article page:
+1. Somehow read .org into variables
+   * bonus: in a way that the data won't be downloaded unless the user visits the article page.
+2. From the route, find the correct variable to read from
+3. Render variable content into an article
+
+*** TODO Research about using Rust from Clojure. Objective: using orgize
+Examples:
+https://github.com/theiceshelf/firn
+https://github.com/naomijub/JVM-rust-ffi/tree/master/clj-rs
+https://github.com/naomijub/brcode
