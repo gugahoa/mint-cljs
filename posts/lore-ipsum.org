@@ -5,8 +5,74 @@
 
 * Building a static blog with ClojureScript and Reagent
 
-This article is being written as I learn ClojureScript and create the blog which will host the article itself. It's a living organism.
+** The Index
 
-First of all, there's only two things that will go into the compile step:
-1. The index list, with title, summary, id and publishing date
-2. The article content, which somehow I want to separate in different modules so that tree shaking can do the heavy lifting
+The blog index contains articles' summaries, title and creation date. Our posts contain properties for those information, with a syntax such as the following:
+
+#+NAME: properties-example
+#+BEGIN_SRC org
+#+PROPERTY: id some-unique-id
+#+PROPERTY: date 2020-12-30
+#+PROPERTY: title My article title
+#+PROPERTY: summary A short summary of my article
+#+END_SRC
+
+To read those properties at compile–time we'll use a macro, defined inside a Clojure source file as it needs access to Java APIs.
+
+#+NAME: reader-core-1
+#+BEGIN_SRC clojure
+(ns mint.reader.core (:require
+                      [clojure.java.io :as io]
+                      [clojure.string :as str]))
+
+(def directory
+  "Our posts live inside the `/posts` folder"
+  (io/file "./posts"))
+
+(def files
+  "A sequence of files inside our posts directory"
+  (filter #(.isFile %) (file-seq directory)))
+
+(defn- raw-properties
+  "Everything before the first empty line is considered a raw property"
+  [reader]
+  (take-while not-empty reader))
+
+(defn- clean-raw-property
+  "A raw property is a string with the following format `#+PROPERTY: name value`.
+  If given the above value as input, this function will return {:name \"value\"}"
+  [raw-property]
+  (-> raw-property
+      (str/split #":")
+      second
+      str/trim
+      (str/split #" " 2)
+      (update-in [0] keyword)))
+
+(defn- build-properties
+  "This functions take a reader and return a map mapping a property name to its value"
+  [rdr]
+  (->> (line-seq rdr)
+       raw-properties
+       (map clean-raw-property)
+       (into {})))
+
+(defn- read-properties [file]
+  (with-open [rdr (io/reader file)]
+    (build-properties rdr)))
+
+(defmacro posts-index
+  "A macro that returns a list of posts"
+  []
+  (mapv read-properties files))
+#+END_SRC
+
+The `posts-index` macro now can be used directly inside cljs files, and will evaluate at compile time to the posts index structure.
+
+You can read more about this strategy in [this blogpost](https://blog.fikesfarm.com/posts/2018-08-12-two-file-clojurescript-namespace-pattern.html).
+
+Updating the `/posts` folder, or any file therein, does not trigger hot reload. This is a downside that I plan to address, but it hasn't bothered me enough.
+
+*** TODO article id can be inferred by file name, as the file name is guaranteed to be unique
+
+** The Article
