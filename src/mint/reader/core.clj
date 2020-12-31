@@ -10,6 +10,14 @@
   "A sequence of files inside our posts directory"
   (filter #(.isFile %) (file-seq directory)))
 
+(defn- file-name
+  "Accepts a File object and return its name"
+  [file]
+  (->> file
+       .toPath
+       .getFileName
+       str))
+
 (defn- raw-properties
   "Everything before the first empty line is considered a raw property"
   [reader]
@@ -36,7 +44,11 @@
 
 (defn- read-properties [file]
   (with-open [rdr (io/reader file)]
-    (build-properties rdr)))
+    (-> rdr
+        build-properties
+        (assoc :id (file-name file)))))
 
-(defmacro posts-index []
+(defmacro posts-index
+  "A macro that returns a list of posts"
+  []
   (mapv read-properties files))
