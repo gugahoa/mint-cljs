@@ -1,12 +1,7 @@
 ;; shadow-cljs configuration
-{:source-paths
- ["src"]
-
- :dependencies
- [[reagent "1.0.0"]]
-
+{:lein     true
  :dev-http {8080 "public"}
  :builds
  {:frontend
-  {:target :browser
+  {:target  :browser
    :modules {:main {:init-fn mint.frontend.app/init}}}}}
