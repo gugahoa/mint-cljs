@@ -1,0 +1,13 @@
+[package]
+name = "orgize-jni"
+version = "0.1.0"
+authors = ["Gustavo Aguiar <gugahoa@gmail.com>"]
+edition = "2018"
+
+[lib]
+crate_type = ["cdylib"]
+
+[dependencies]
+jni = "0.18.0"
+orgize = "0.8.4"
+serde_json = "1.0"
